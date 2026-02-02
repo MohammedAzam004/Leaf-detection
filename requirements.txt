@@ -1,0 +1,11 @@
+torch>=2.0.0
+torchvision
+timm
+albumentations==1.4.3
+opencv-python
+numpy
+pandas
+streamlit
+albumentations
+pillow
+

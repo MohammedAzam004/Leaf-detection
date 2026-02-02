@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Model Files (large files - consider using Git LFS)
+*.pth
+*.pt
+*.h5
+*.ckpt
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# Environment Variables
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+*.cache
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Temporary Files
+*.tmp
+*.bak
+temp/
+
+# Streamlit
+.streamlit/
