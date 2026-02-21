@@ -88,7 +88,9 @@
 ### Prerequisites
 
 Before you begin, ensure you have:
-- **Python 3.8+** installed ([Download here](https://www.python.org/downloads/))
+- **Python 3.8 - 3.11** installed ([Download here](https://www.python.org/downloads/))
+  - ⚠️ **Note**: Python 3.11 is recommended for deployment compatibility
+  - PyTorch 2.0.1 does not support Python 3.12+
 - **Git** installed ([Download here](https://git-scm.com/downloads))
 - **Git LFS** for large model files ([Install guide](https://git-lfs.github.com/))
 - **4GB RAM** minimum (8GB recommended)
@@ -207,6 +209,7 @@ Open your browser and navigate to: **http://localhost:8501**
    - Select your repository
    - Set main file: `streamlit_app.py`
    - Click **"Deploy!"**
+   - ✅ `.python-version` ensures Python 3.11 is used automatically
 
 3. **Verify Deployment**
    - Wait 2-3 minutes for build
@@ -233,7 +236,8 @@ Agrovision-ai/
 ├── 🤖 best_fast_model.pth       # Trained AI model (82MB, Git LFS)
 ├── 📋 requirements.txt           # Python dependencies
 ├── 📦 packages.txt               # System dependencies (Linux)
-├── 🔐 .gitignore                 # Git ignore rules
+├── � .python-version            # Python version (3.11 for deployment)
+├── �🔐 .gitignore                 # Git ignore rules
 ├── 📝 .gitattributes             # Git LFS configuration
 ├── 📖 README.md                  # This file
 ├── 🚀 DEPLOYMENT.md              # Deployment guide
@@ -252,6 +256,7 @@ Agrovision-ai/
 | `best_fast_model.pth` | Pre-trained EfficientNetV2-S model weights |
 | `requirements.txt` | Python package dependencies |
 | `packages.txt` | System-level dependencies for Streamlit Cloud |
+| `.python-version` | Forces Python 3.11 for deployment compatibility |
 | `.gitattributes` | Configures Git LFS for large model file |
 | `.gitignore` | Specifies files to exclude from Git |
 
@@ -339,6 +344,19 @@ Solution:
 # Option 1: Hugging Face Hub
 # Option 2: Google Drive public link
 # Update utils.py to download model on first run
+```
+
+**Problem**: Deployment fails with "No matching distribution found for torch==2.0.1"
+```bash
+# Solution: Python version incompatibility
+# Streamlit Cloud may use Python 3.13+ which doesn't support torch 2.0.1
+# Fix: .python-version file forces Python 3.11 (already included)
+# The .python-version file in the repo ensures compatible Python version
+
+# Alternative: Update to newer PyTorch (if needed)
+# Edit requirements.txt:
+torch==2.5.1
+torchvision==0.20.1
 ```
 
 ### Still Having Issues?
