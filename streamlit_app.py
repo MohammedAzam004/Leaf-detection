@@ -10,10 +10,18 @@ st.markdown("Upload a leaf image or use the camera to detect disease and see cur
 
 @st.cache_resource(show_spinner=False)
 def load_model_once():
-    model, id2label = load_checkpoint()
-    return model, id2label
+    try:
+        model, id2label = load_checkpoint()
+        return model, id2label
+    except FileNotFoundError as e:
+        st.error(f"❌ Model file not found: {e}")
+        st.stop()
+    except Exception as e:
+        st.error(f"❌ Error loading model: {e}")
+        st.stop()
 
-model, id2label = load_model_once()
+with st.spinner("Loading AI model..."):
+    model, id2label = load_model_once()
 
 mode = st.sidebar.radio("Mode", ["Upload Image", "Use Camera (experimental)"])
 if mode == "Upload Image":
@@ -21,19 +29,23 @@ if mode == "Upload Image":
     if uploaded:
         image = Image.open(uploaded).convert("RGB")
         st.image(image, caption="Input Image", use_column_width=True)
-        bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-        res = predict_bgr_image(model, bgr, id2label)
         
-        
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Accuracy Rate", f"{res['confidence']*100:.1f}%")
-        
-        st.divider()
-        st.markdown(f"**Crop:** {res['crop']}")
-        st.markdown(f"**Disease:** {res['disease']}")
-        st.markdown(f"**Cure / Advice:** {res['advice']}")
-        st.markdown(f"**Recommended pesticide:** {res['pesticide']}")
+        try:
+            bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+            res = predict_bgr_image(model, bgr, id2label)
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Accuracy Rate", f"{res['confidence']*100:.1f}%")
+            
+            st.divider()
+            st.markdown(f"**Crop:** {res['crop']}")
+            st.markdown(f"**Disease:** {res['disease']}")
+            st.markdown(f"**Cure / Advice:** {res['advice']}")
+            st.markdown(f"**Recommended pesticide:** {res['pesticide']}")
+        except Exception as e:
+            st.error(f"❌ Error processing image: {e}")
+            st.info("Please try with a different image.")
 
 else:
     st.info("Camera mode uses browser camera. Works best in Streamlit sharing or local run with camera permission.")
@@ -41,16 +53,20 @@ else:
     if img_file_buffer:
         image = Image.open(img_file_buffer).convert("RGB")
         st.image(image, caption="Captured Image", use_column_width=True)
-        bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-        res = predict_bgr_image(model, bgr, id2label)
         
-        
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Accuracy Rate", f"{res['confidence']*100:.1f}%")
-        
-        st.divider()
-        st.markdown(f"**Crop:** {res['crop']}")
-        st.markdown(f"**Disease:** {res['disease']}")
-        st.markdown(f"**Cure / Advice:** {res['advice']}")
-        st.markdown(f"**Recommended pesticide:** {res['pesticide']}")
+        try:
+            bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+            res = predict_bgr_image(model, bgr, id2label)
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Accuracy Rate", f"{res['confidence']*100:.1f}%")
+            
+            st.divider()
+            st.markdown(f"**Crop:** {res['crop']}")
+            st.markdown(f"**Disease:** {res['disease']}")
+            st.markdown(f"**Cure / Advice:** {res['advice']}")
+            st.markdown(f"**Recommended pesticide:** {res['pesticide']}")
+        except Exception as e:
+            st.error(f"❌ Error processing image: {e}")
+            st.info("Please try capturing a different image.")

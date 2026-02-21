@@ -9,7 +9,20 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "best_fast_model (1).pth")
+# Support both old and new model filenames
+BASE_DIR = os.path.dirname(__file__)
+MODEL_PATHS = [
+    os.path.join(BASE_DIR, "best_fast_model.pth"),
+    os.path.join(BASE_DIR, "best_fast_model (1).pth")
+]
+MODEL_PATH = None
+for path in MODEL_PATHS:
+    if os.path.exists(path):
+        MODEL_PATH = path
+        break
+if MODEL_PATH is None:
+    MODEL_PATH = MODEL_PATHS[0]  # Default to preferred name
+
 MODEL_NAME = "tf_efficientnetv2_s_in21k"
 IMG_SIZE = 192
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

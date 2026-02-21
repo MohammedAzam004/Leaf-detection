@@ -21,13 +21,10 @@ env/
 *.swp
 *.swo
 *~
-.DS_Store
 
-# Model Files (large files - consider using Git LFS)
-*.pth
-*.pt
-*.h5
-*.ckpt
+# Model Files - Tracked by Git LFS (DO NOT ignore *.pth)
+# Remove *.pth from gitignore since we're using Git LFS
+# *.pth files will be tracked by .gitattributes
 
 # Jupyter Notebook
 .ipynb_checkpoints/
@@ -36,6 +33,7 @@ env/
 # Environment Variables
 .env
 .env.local
+*.env
 
 # Logs
 *.log
@@ -53,6 +51,45 @@ Thumbs.db
 *.tmp
 *.bak
 temp/
+*.temp
 
 # Streamlit
-.streamlit/
+.streamlit/secrets.toml
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Data files (if you don't want to track raw datasets)
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+
+# Documentation builds
+docs/_build/
+site/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Backup files
+*~
+*.backup
+*.old
+
