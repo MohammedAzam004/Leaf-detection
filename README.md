@@ -236,8 +236,8 @@ Agrovision-ai/
 ├── 🤖 best_fast_model.pth       # Trained AI model (82MB, Git LFS)
 ├── 📋 requirements.txt           # Python dependencies
 ├── 📦 packages.txt               # System dependencies (Linux)
-├── � .python-version            # Python version (3.11 for deployment)
-├── �🔐 .gitignore                 # Git ignore rules
+├── � .python-version            # Python version (3.11 for deployment)├── 🐍 runtime.txt                # Python runtime for cloud platforms
+├── 📋 requirements-py313.txt    # Alternative deps for Python 3.13+├── �🔐 .gitignore                 # Git ignore rules
 ├── 📝 .gitattributes             # Git LFS configuration
 ├── 📖 README.md                  # This file
 ├── 🚀 DEPLOYMENT.md              # Deployment guide
@@ -254,9 +254,11 @@ Agrovision-ai/
 | `streamlit_app.py` | Web interface with upload/camera functionality |
 | `utils.py` | Core ML functions (preprocessing, prediction, etc.) |
 | `best_fast_model.pth` | Pre-trained EfficientNetV2-S model weights |
-| `requirements.txt` | Python package dependencies |
+| `requirements.txt` | Python package dependencies (PyTorch 2.0.1, Python 3.11) |
+| `requirements-py313.txt` | Alternative dependencies for Python 3.13+ |
 | `packages.txt` | System-level dependencies for Streamlit Cloud |
-| `.python-version` | Forces Python 3.11 for deployment compatibility |
+| `.python-version` | Forces Python 3.11 (primary method) |
+| `runtime.txt` | Forces Python 3.11 (alternative/fallback method) |
 | `.gitattributes` | Configures Git LFS for large model file |
 | `.gitignore` | Specifies files to exclude from Git |
 
@@ -347,17 +349,57 @@ Solution:
 ```
 
 **Problem**: Deployment fails with "No matching distribution found for torch==2.0.1"
-```bash
-# Solution: Python version incompatibility
-# Streamlit Cloud may use Python 3.13+ which doesn't support torch 2.0.1
-# Fix: .python-version file forces Python 3.11 (already included)
-# The .python-version file in the repo ensures compatible Python version
 
-# Alternative: Update to newer PyTorch (if needed)
-# Edit requirements.txt:
+**Symptoms:**
+```
+ERROR: Could not find a version that satisfies the requirement torch==2.0.1
+Using Python 3.13.12 environment
+```
+
+**Root Cause:** Streamlit Cloud is using Python 3.13, but PyTorch 2.0.1 only supports Python 3.8-3.11.
+
+**Solution - Try in this order:**
+
+**Option 1: Force Python 3.11 (Recommended)**
+
+The repository includes both `.python-version` and `runtime.txt` files to force Python 3.11:
+
+1. Ensure both files exist in your repo root:
+   - `.python-version` (contains: `3.11`)
+   - `runtime.txt` (contains: `python-3.11`)
+
+2. On Streamlit Cloud:
+   - Go to your app settings → "Reboot app"
+   - Or delete and redeploy the app
+   - Check deployment logs to verify Python version
+
+**Option 2: Update to Python 3.13-compatible PyTorch**
+
+If Python version files don't work, update dependencies:
+
+```bash
+# Backup your current requirements
+cp requirements.txt requirements-old.txt
+
+# Use the Python 3.13 compatible requirements
+cp requirements-py313.txt requirements.txt
+
+# Or manually update requirements.txt:
 torch==2.5.1
 torchvision==0.20.1
+timm==1.0.3
+opencv-python-headless==4.10.0.84
+streamlit==1.39.0
 ```
+
+Then commit and push:
+```bash
+git add requirements.txt
+git commit -m "Update to Python 3.13 compatible dependencies"
+git push origin main
+```
+
+**Verify your model still works** after updating PyTorch versions by testing locally first!
 
 ### Still Having Issues?
 
