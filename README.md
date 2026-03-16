@@ -218,12 +218,181 @@ Open your browser and navigate to: **http://localhost:8501**
 
 📖 For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
 
-### Other Deployment Options
+### Alternative Deployment Platforms
 
-- **Hugging Face Spaces**: Better for GPU support
-- **Heroku**: Custom domain support
-- **AWS/GCP**: Enterprise-scale deployment
-- **Docker**: Containerized deployment
+If Streamlit Cloud gives errors, try these excellent alternatives:
+
+#### 🤗 Hugging Face Spaces (Recommended Alternative)
+
+**Pros:** Free, GPU support, great for ML apps, handles large models
+**Best for:** AI/ML applications with large model files
+
+**Steps:**
+1. Go to [huggingface.co/spaces](https://huggingface.co/spaces)
+2. Click **"Create new Space"**
+3. Choose **Streamlit** as SDK
+4. Connect your GitHub repository
+5. Add Python version in `README.md` header:
+   ```yaml
+   ---
+   title: AgroVision AI
+   emoji: 🌿
+   colorFrom: green
+   colorTo: blue
+   sdk: streamlit
+   sdk_version: 1.31.0
+   python_version: 3.11
+   app_file: streamlit_app.py
+   ---
+   ```
+6. Deploy! Your app will be live at: `https://huggingface.co/spaces/yourusername/agrovision-ai`
+
+📖 [Hugging Face Spaces Documentation](https://huggingface.co/docs/hub/spaces-sdks-streamlit)
+
+---
+
+#### 🚀 Render (Simple & Reliable)
+
+**Pros:** Easy setup, free tier, auto-deploys from GitHub
+**Best for:** Quick deployment without configuration hassle
+
+**Steps:**
+1. Go to [render.com](https://render.com/)
+2. Sign up with GitHub
+3. Click **"New +"** → **"Web Service"**
+4. Connect your repository
+5. Configure:
+   - **Name:** agrovision-ai
+   - **Environment:** Python 3
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `streamlit run streamlit_app.py --server.port=$PORT --server.address=0.0.0.0`
+6. Add environment variable:
+   - `PYTHON_VERSION` = `3.11.0`
+7. Click **"Create Web Service"**
+
+📖 [Render Streamlit Guide](https://render.com/docs/deploy-streamlit-app)
+
+---
+
+#### 🐳 Docker + Cloud Run (Google Cloud)
+
+**Pros:** Full control, scalable, always works
+**Best for:** Production deployments, professional projects
+
+**Steps:**
+
+1. **Create Dockerfile:**
+   ```dockerfile
+   FROM python:3.11-slim
+   
+   WORKDIR /app
+   
+   # Install system dependencies
+   RUN apt-get update && apt-get install -y \
+       libgl1-mesa-glx \
+       libglib2.0-0 \
+       && rm -rf /var/lib/apt/lists/*
+   
+   # Copy files
+   COPY requirements.txt .
+   COPY packages.txt .
+   RUN pip install --no-cache-dir -r requirements.txt
+   
+   COPY . .
+   
+   EXPOSE 8080
+   
+   CMD streamlit run streamlit_app.py \
+       --server.port=8080 \
+       --server.address=0.0.0.0 \
+       --server.headless=true
+   ```
+
+2. **Deploy to Google Cloud Run:**
+   ```bash
+   # Install Google Cloud CLI
+   # Then run:
+   gcloud run deploy agrovision-ai \
+       --source . \
+       --platform managed \
+       --region us-central1 \
+       --allow-unauthenticated
+   ```
+
+📖 [Cloud Run Quickstart](https://cloud.google.com/run/docs/quickstarts)
+
+---
+
+#### 🟣 Heroku (Classic Platform)
+
+**Pros:** Simple, well-documented, add-ons available
+**Note:** Free tier removed, but Eco plan is $5/month
+
+**Steps:**
+1. Install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+2. Create these files:
+
+   **Procfile:**
+   ```
+   web: streamlit run streamlit_app.py --server.port=$PORT --server.address=0.0.0.0
+   ```
+
+   **setup.sh:**
+   ```bash
+   mkdir -p ~/.streamlit/
+   echo "[server]
+   headless = true
+   port = $PORT
+   enableCORS = false
+   " > ~/.streamlit/config.toml
+   ```
+
+3. Deploy:
+   ```bash
+   heroku login
+   heroku create agrovision-ai
+   git push heroku main
+   ```
+
+📖 [Heroku Python Guide](https://devcenter.heroku.com/articles/getting-started-with-python)
+
+---
+
+#### ☁️ Railway (Modern Alternative)
+
+**Pros:** Easy, generous free tier, GitHub integration
+**Best for:** Quick deployment with minimal config
+
+**Steps:**
+1. Go to [railway.app](https://railway.app/)
+2. Click **"Start a New Project"** → **"Deploy from GitHub repo"**
+3. Select your repository
+4. Railway auto-detects Python and installs dependencies
+5. Add start command: `streamlit run streamlit_app.py`
+6. Deploy!
+
+📖 [Railway Deployment Docs](https://docs.railway.app/deploy/deployments)
+
+---
+
+### 📊 Platform Comparison
+
+| Platform | Free Tier | Python 3.11 | Large Files | Difficulty | Best For |
+|----------|-----------|-------------|-------------|------------|----------|
+| **Streamlit Cloud** | ✅ Yes | ⚠️ Issues | ✅ Git LFS | ⭐ Easy | Streamlit apps |
+| **Hugging Face** | ✅ Yes | ✅ Yes | ✅ Yes | ⭐ Easy | ML/AI apps |
+| **Render** | ✅ Yes | ✅ Yes | ✅ Yes | ⭐⭐ Medium | General apps |
+| **Railway** | ✅ Limited | ✅ Yes | ✅ Yes | ⭐ Easy | Quick deploy |
+| **Google Cloud Run** | ✅ Yes | ✅ Yes | ✅ Yes | ⭐⭐⭐ Hard | Production |
+| **Heroku** | ❌ $5/mo | ✅ Yes | ✅ Yes | ⭐⭐ Medium | Traditional |
+
+### 🎯 My Recommendation
+
+**For your AgroVision AI app, I recommend:**
+
+1. **🥇 Hugging Face Spaces** - Perfect for ML apps, handles large models, free
+2. **🥈 Render** - Reliable, easy to use, free tier
+3. **🥉 Railway** - Modern, simple, good free tier
 
 ---
 
