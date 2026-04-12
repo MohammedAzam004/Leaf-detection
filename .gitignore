@@ -32,8 +32,20 @@ env/
 
 # Environment Variables
 .env
+.env.*
 .env.local
 *.env
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.secret
+*.secrets
+secrets/
+credentials/
+service-account*.json
+firebase-adminsdk*.json
 
 # Logs
 *.log
